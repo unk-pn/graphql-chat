@@ -1,1 +1,1 @@
-export { ChatItem, ChatItem as default } from './ui/ChatItem'
+export { ChatItem, ChatItem as default } from "./ui/ChatItem";

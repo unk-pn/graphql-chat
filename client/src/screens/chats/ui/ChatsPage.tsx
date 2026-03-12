@@ -1,18 +1,18 @@
-'use client'
+"use client";
 
-import ChatSidebar from '@/features/chatSidebar'
-import ChatWindow from '@/widgets/chatWindow'
+import ChatSidebar from "@/features/chatSidebar";
+import ChatWindow from "@/widgets/chatWindow";
 
-import s from './ChatPage.module.scss'
+import s from "./ChatPage.module.scss";
 
 const ChatsPage = () => {
-    return (
-        <div className={s.chatPage}>
-            <ChatSidebar />
-            <ChatWindow />
-        </div>
-    )
-}
+  return (
+    <div className={s.chatPage}>
+      <ChatSidebar />
+      <ChatWindow />
+    </div>
+  );
+};
 
-export default ChatsPage
-export { ChatsPage }
+export default ChatsPage;
+export { ChatsPage };

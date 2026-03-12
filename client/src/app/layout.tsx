@@ -1,20 +1,24 @@
-import type { Metadata } from 'next'
+import type { Metadata } from "next";
 
-import './globals.css'
+import "./globals.css";
 
-import { Providers } from './provider'
+import { Providers } from "./provider";
 
 export const metadata: Metadata = {
-    title: 'Messenger UI',
-    description: 'UI-only messenger application',
-}
+  title: "Messenger UI",
+  description: "UI-only messenger application",
+};
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
-    return (
-        <html lang={'ru'}>
-            <body>
-                <Providers>{children}</Providers>
-            </body>
-        </html>
-    )
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  return (
+    <html lang={"ru"}>
+      <body>
+        <Providers>{children}</Providers>
+      </body>
+    </html>
+  );
 }

@@ -1,1 +1,1 @@
-export { ChatWindow, ChatWindow as default } from './ui/ChatWindow'
+export { ChatWindow, ChatWindow as default } from "./ui/ChatWindow";
