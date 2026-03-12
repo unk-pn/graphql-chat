@@ -7,10 +7,17 @@ import express from "express";
 import http from "http";
 import { typeDefs } from "./schema/typeDefs.js";
 import { resolvers } from "./schema/resolvers.js";
+import cors from "cors";
 
 const schema = makeExecutableSchema({ typeDefs, resolvers });
 
 const app = express();
+app.use(
+  cors({
+    origin: "http://localhost:3000",
+  }),
+);
+
 const httpServer = http.createServer(app);
 
 const wsServer = new WebSocketServer({
