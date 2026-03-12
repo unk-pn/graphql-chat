@@ -1,9 +1,14 @@
-import c from "./page.module.css";
+'use client'
+
+import { useRouter } from 'next/navigation'
+import { useEffect } from 'react'
 
 export default function Home() {
-  return (
-    <div className={c.page}>
-      <h1 className={c.title}>Hello World</h1>      
-    </div>
-  );
+    const router = useRouter()
+
+    useEffect(() => {
+        router.replace('/chats')
+    }, [router])
+
+    return null
 }

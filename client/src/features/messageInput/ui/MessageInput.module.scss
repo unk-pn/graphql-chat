@@ -1,0 +1,84 @@
+.inputContainer {
+    display: flex;
+    align-items: flex-end;
+    gap: 8px;
+    padding: 12px 16px;
+    background-color: #1a1a1a;
+    border-top: 1px solid #2a2a2a;
+}
+
+.attachButton {
+    width: 40px;
+    height: 40px;
+    border: none;
+    background: transparent;
+    border-radius: 50%;
+    color: #888;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: background-color 0.15s, color 0.15s;
+
+    &:hover {
+        background-color: #2a2a2a;
+        color: #ededed;
+    }
+}
+
+.input {
+    flex: 1;
+    background-color: #2a2a2a;
+    border: none;
+    border-radius: 20px;
+    padding: 10px 16px;
+    font-size: 14px;
+    color: #ededed;
+    resize: none;
+    min-height: 40px;
+    max-height: 120px;
+    line-height: 1.4;
+    outline: none;
+
+    &::placeholder {
+        color: #888;
+    }
+
+    &:focus {
+        background-color: #333;
+    }
+
+    &:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+}
+
+.sendButton {
+    width: 40px;
+    height: 40px;
+    border: none;
+    background-color: #3a3a3a;
+    border-radius: 50%;
+    color: #888;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: background-color 0.15s, color 0.15s;
+
+    &:disabled {
+        cursor: not-allowed;
+    }
+
+    &.active {
+        background-color: #2563eb;
+        color: #fff;
+
+        &:hover {
+            background-color: #1d4ed8;
+        }
+    }
+}

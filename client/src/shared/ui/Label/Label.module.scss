@@ -1,0 +1,10 @@
+.label {
+    display: block;
+    color: #747474;
+    font-family: 'Source Sans Pro', sans-serif;
+    font-size: clamp(11px, calc(11px + (16 - 11) * ((100vw - 320px) / (1024 - 320))), 16px);
+    font-style: normal;
+    font-weight: 400;
+    margin-bottom: 8px;
+    text-transform: capitalize;
+}
