@@ -1,0 +1,21 @@
+{
+  "name": "server",
+  "module": "index.ts",
+  "type": "module",
+  "private": true,
+  "devDependencies": {
+    "@types/bun": "latest",
+    "@types/ws": "^8.18.1"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  },
+  "dependencies": {
+    "@apollo/server": "^5.4.0",
+    "@graphql-tools/schema": "^10.0.31",
+    "graphql": "^16.13.1",
+    "graphql-subscriptions": "^3.0.0",
+    "graphql-ws": "^6.0.7",
+    "ws": "^8.19.0"
+  }
+}
