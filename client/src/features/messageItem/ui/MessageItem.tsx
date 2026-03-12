@@ -15,8 +15,12 @@ const MessageItem = ({
   isOwn,
   isRead,
 }: MessageItemProps) => {
-  const formatTime = (dateStr: string) => {
-    const date = new Date(dateStr);
+  const formatTime = (dateStr?: string) => {
+    if (!dateStr) return ""; // 👈 защита от undefined
+    const timestamp = Number(dateStr);
+    const date = isNaN(timestamp)
+      ? new Date(dateStr)
+      : new Date(timestamp * 1000);
     return date.toLocaleTimeString("ru-RU", {
       hour: "2-digit",
       minute: "2-digit",
@@ -28,7 +32,9 @@ const MessageItem = ({
       <div className={`${s.message} ${isOwn ? s.ownMessage : s.otherMessage}`}>
         <p className={s.content}>{content}</p>
         <div className={s.meta}>
-          <span className={s.time}>{formatTime(timestamp)}</span>
+          <span className={s.time} suppressHydrationWarning>
+            {formatTime(timestamp)}
+          </span>
           {isOwn && (
             <span className={s.status}>
               {isRead ? <DoubleCheckIcon /> : <SingleCheckIcon />}

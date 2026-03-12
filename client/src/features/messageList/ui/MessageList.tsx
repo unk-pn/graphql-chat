@@ -33,9 +33,10 @@ const MessageList = ({ messages, currentUserId }: MessageListProps) => {
       {messages.map((message) => (
         <MessageItem
           key={message.id}
-          content={message.content}
+          content={message.text}
           timestamp={message.createdAt}
-          isOwn={message.senderId === currentUserId}
+          // isOwn={message.author === currentUserId}
+          isOwn={message.author === "Me"}
           isRead={message.isRead}
         />
       ))}

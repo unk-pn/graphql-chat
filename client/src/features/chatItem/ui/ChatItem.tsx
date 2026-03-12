@@ -61,7 +61,7 @@ const ChatItem = ({ chat, isSelected, onClick }: ChatItemProps) => {
         <div className={s.header}>
           <span className={s.name}>{recipientName}</span>
           {chat.lastMessage?.createdAt && (
-            <span className={s.time}>
+            <span className={s.time} suppressHydrationWarning>
               {formatTime(chat.lastMessage.createdAt)}
             </span>
           )}

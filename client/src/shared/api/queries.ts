@@ -23,7 +23,7 @@ export const SEND_MESSAGE = gql`
 `;
 
 // Subscriptions
-export const MESSAGE_SENT = gql`
+export const MESSAGE_SUBSCRIPTION = gql`
   subscription messageSent {
     messageSent {
       id
