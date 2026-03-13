@@ -5,9 +5,11 @@ import { WebSocketServer } from "ws";
 import { useServer } from "graphql-ws/use/ws";
 import express from "express";
 import http from "http";
-import { typeDefs } from "./schema/typeDefs.js";
-import { resolvers } from "./schema/resolvers.js";
+import { resolvers } from "./schema/resolvers";
 import cors from "cors";
+import { typeDefs } from "./schema/typeDefs";
+import { pubsub } from "./pubsub";
+import jwt from "jsonwebtoken";
 
 const schema = makeExecutableSchema({ typeDefs, resolvers });
 
@@ -32,7 +34,27 @@ const server = new ApolloServer({ schema });
 await server.start();
 
 app.use(express.json());
-app.use("/graphql", expressMiddleware(server));
+app.use(
+  "/graphql",
+  expressMiddleware(server, {
+    context: async ({ req }) => {
+      const authHeader = req.headers.authorization || "";
+      const token = authHeader.replace("Bearer ", "");
+
+      let userId = null;
+      if (token) {
+        try {
+          const decoded = jwt.verify(token, process.env.JWT_SECRET!) as any;
+          userId = decoded.userId;
+        } catch (err) {
+          console.warn("Invalid token format");
+        }
+      }
+
+      return { req, userId, pubsub };
+    },
+  }),
+);
 
 httpServer.listen(4000, () => {
   console.log("HTTP: http://localhost:4000/graphql");
