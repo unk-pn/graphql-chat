@@ -29,15 +29,14 @@ export const messageResolvers = {
           readAt: new Date(),
         },
       });
-
     },
 
     async sendMessage(
       _: unknown,
-      args: { chatId: string; content: string },
+      args: { chatId: string; text: string },
       ctx: GraphQLContext,
     ) {
-      const { chatId, content } = args;
+      const { chatId, text } = args;
       if (!ctx.userId) throw new Error("Unauthorized");
 
       const membership = await prisma.chatUser.findUnique({
@@ -50,7 +49,7 @@ export const messageResolvers = {
 
       const message = await prisma.message.create({
         data: {
-          text: content,
+          text,
           chatId,
           authorId: ctx.userId,
         },

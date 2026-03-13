@@ -11,6 +11,7 @@ export const messageTypeDefs = `
   }
   
   type Mutation {
+    sendMessage(chatId: ID!, text: String!): Message!
     markAsRead(chatId: ID!): Boolean!
   }
 

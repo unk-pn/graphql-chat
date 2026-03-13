@@ -1,6 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-
-import { Chat, Message, MOCK_CHATS, MOCK_CHAT_MESSAGES } from "@/shared/types";
+import { createApi } from "@reduxjs/toolkit/query/react";
+import { Chat, Message } from "@/shared/types";
+import { gql } from "@apollo/client";
 
 interface ChatState {
   chats: Chat[];
@@ -9,9 +10,9 @@ interface ChatState {
 }
 
 const initialState: ChatState = {
-  chats: MOCK_CHATS,
+  chats: [],
   selectedChatId: null,
-  messages: MOCK_CHAT_MESSAGES,
+  messages: {},
 };
 
 const chatSlice = createSlice({
@@ -22,6 +23,39 @@ const chatSlice = createSlice({
       state.selectedChatId = action.payload;
     },
   },
+});
+
+export const chatApi = createApi({
+  reducerPath: "chatApi",
+  baseQuery: () => ({ data: null as unknown }),
+  endpoints: (builder) => ({
+    getChats: builder.query<{ chats: Chat[] }, void>({
+      query: () => ({
+        document: gql`
+          query GetChats {
+            chats {
+              id
+              otherUser {
+                id
+                username
+                avatarUrl
+              }
+              unreadCount
+              lastMessage {
+                id
+                text
+                author {
+                  id
+                  username
+                }
+                createdAt
+              }
+            }
+          }
+        `,
+      }),
+    }),
+  }),
 });
 
 export const { setSelectedChat } = chatSlice.actions;

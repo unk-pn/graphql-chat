@@ -1,5 +1,5 @@
-import ChatsPage from '@/screens/chats'
+import { ChatsPage } from "@/screens/chats";
 
 export default function NextLoginPage() {
-    return <ChatsPage />
+  return <ChatsPage />;
 }
