@@ -18,7 +18,7 @@ export const messageResolvers = {
 
       if (!membership) throw new Error("You are not a member of this chat");
 
-      const result = await prisma.message.updateMany({
+      await prisma.message.updateMany({
         where: {
           chatId,
           authorId: { not: ctx.userId },
@@ -29,14 +29,15 @@ export const messageResolvers = {
           readAt: new Date(),
         },
       });
+
+      return true;
     },
 
     async sendMessage(
       _: unknown,
-      args: { chatId: string; text: string },
+      { chatId, text }: { chatId: string; text: string },
       ctx: GraphQLContext,
     ) {
-      const { chatId, text } = args;
       if (!ctx.userId) throw new Error("Unauthorized");
 
       const membership = await prisma.chatUser.findUnique({

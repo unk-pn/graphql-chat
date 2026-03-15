@@ -16,7 +16,8 @@ const schema = makeExecutableSchema({ typeDefs, resolvers });
 const app = express();
 app.use(
   cors({
-    origin: "http://localhost:3000",
+    origin: ["http://localhost:3000", "http://192.168.0.144:3000"],
+    credentials: true,
   }),
 );
 
@@ -27,7 +28,28 @@ const wsServer = new WebSocketServer({
   path: "/graphql",
 });
 
-useServer({ schema }, wsServer);
+useServer(
+  {
+    schema,
+    context: async (ctx) => {
+      const authHeader = (ctx.connectionParams?.Authorization as string) || "";
+      const token = authHeader.replace("Bearer ", "");
+
+      let userId = null;
+      if (token) {
+        try {
+          const decoded = jwt.verify(token, process.env.JWT_SECRET!) as any;
+          userId = decoded.userId;
+        } catch (error) {
+          console.warn("Invalid ws token format");
+        }
+      }
+
+      return { userId, pubsub };
+    },
+  },
+  wsServer,
+);
 
 const server = new ApolloServer({ schema });
 

@@ -7,6 +7,7 @@ import {
 import { GraphQLWsLink } from "@apollo/client/link/subscriptions";
 import { getMainDefinition } from "@apollo/client/utilities";
 import { createClient } from "graphql-ws";
+import { getCookie } from "../lib/getCookie";
 
 const httpLink = new HttpLink({
   uri: process.env.NEXT_PUBLIC_GRAPHQL_ENDPOINT,
@@ -15,8 +16,24 @@ const httpLink = new HttpLink({
 const wsLink = new GraphQLWsLink(
   createClient({
     url: process.env.NEXT_PUBLIC_GRAPHQL_WS_ENDPOINT!,
+    connectionParams: () => {
+      const token = getCookie("token");
+      return {
+        Authorization: token ? `Bearer ${token}` : "",
+      };
+    },
   }),
 );
+
+const authLink = new ApolloLink((operation, forward) => {
+  const token = getCookie("token");
+  operation.setContext({
+    headers: {
+      Authorization: token ? `Bearer ${token}` : "",
+    },
+  });
+  return forward(operation);
+});
 
 const splitLink = ApolloLink.split(
   ({ query }) => {
@@ -27,7 +44,7 @@ const splitLink = ApolloLink.split(
     );
   },
   wsLink,
-  httpLink,
+  authLink.concat(httpLink),
 );
 
 export const client = new ApolloClient({

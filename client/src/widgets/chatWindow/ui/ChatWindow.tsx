@@ -2,14 +2,18 @@
 
 import MessageInput from "@/features/messageInput";
 import MessageList from "@/features/messageList";
+import { ChatHeader } from "@/features/chatHeader";
 import {
   GET_MESSAGES,
+  MARK_AS_READ,
   MESSAGE_SUBSCRIPTION,
   SEND_MESSAGE,
 } from "@/shared/api/queries";
 import { Message } from "@/shared/types";
 import { useMutation, useQuery, useSubscription } from "@apollo/client/react";
 import s from "./ChatWindow.module.scss";
+import { useEffect, useState } from "react";
+import { getCookie } from "@/shared/lib/getCookie";
 
 interface MessageSubscriptionData {
   messageSent: Message;
@@ -24,20 +28,41 @@ interface ChatWindowProps {
 }
 
 export const ChatWindow = ({ chatId }: ChatWindowProps) => {
+  const [currentUserId, setCurrentUserId] = useState<string>(() => {
+    if (typeof window === "undefined") return "";
+    const token = getCookie("token");
+    if (!token) return "";
+    const payload = JSON.parse(atob(token.split(".")[1]));
+    return payload.userId || payload.sub || "";
+  });
+
   const { data, loading } = useQuery<GetMessageData, { chatId: string }>(
     GET_MESSAGES,
     {
       variables: { chatId },
       skip: !chatId,
+      fetchPolicy: "network-only",
     },
   );
   const [sendMessage] = useMutation(SEND_MESSAGE);
+  const [markAsRead] = useMutation(MARK_AS_READ);
+
+  useEffect(() => {
+    if (chatId) {
+      markAsRead({
+        variables: { chatId },
+        refetchQueries: [{ query: GET_MESSAGES }],
+      });
+    }
+  }, [chatId, markAsRead]);
 
   const handleSendMessage = async (text: string) => {
+    if (!text?.trim()) return;
+
     await sendMessage({
       variables: {
         chatId,
-        text,
+        text: text.trim(),
       },
     });
   };
@@ -47,7 +72,7 @@ export const ChatWindow = ({ chatId }: ChatWindowProps) => {
     skip: !chatId,
     onData: ({ client, data }) => {
       const newMessage = data.data?.messageSent;
-      if (!newMessage) return;
+      if (!newMessage || !newMessage.id) return;
 
       client.cache.updateQuery<GetMessageData>(
         { query: GET_MESSAGES, variables: { chatId } },
@@ -57,13 +82,16 @@ export const ChatWindow = ({ chatId }: ChatWindowProps) => {
       );
     },
   });
-  console.log("messages:", data?.messages);
 
   if (loading) return <p>loading...</p>;
 
   return (
     <div className={s.chatWindow}>
-      <MessageList messages={data?.messages || []} currentUserId="0" />
+      <ChatHeader chatId={chatId} />
+      <MessageList
+        messages={data?.messages || []}
+        currentUserId={currentUserId}
+      />
       <MessageInput onSend={handleSendMessage} />
     </div>
   );

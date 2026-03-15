@@ -3,22 +3,50 @@ import type { ChatWithRelations, GraphQLContext } from "../../types/gql";
 
 export const chatResolvers = {
   Query: {
+    async searchUsers(
+      _: unknown,
+      { query }: { query: string },
+      ctx: GraphQLContext,
+    ) {
+      if (!ctx.userId) throw new Error("Unauthorized");
+
+      return prisma.user.findMany({
+        where: {
+          username: {
+            contains: query,
+            mode: "insensitive",
+          },
+          id: { not: ctx.userId },
+        },
+        take: 10,
+      });
+    },
+
     async chats(_: unknown, __: unknown, ctx: GraphQLContext) {
       if (!ctx.userId) throw new Error("Unauthorized");
 
-      return prisma.chat.findMany({
+      const chats = await prisma.chat.findMany({
         where: {
-          members: {
-            some: { userId: ctx.userId },
-          },
+          members: { some: { userId: ctx.userId } },
         },
         include: {
           members: {
             include: { user: true },
           },
-          messages: true,
+          messages: {
+            take: 1,
+            orderBy: { createdAt: "desc" },
+            include: { author: true },
+          },
         },
       });
+
+      return chats.map((chat: any) => ({
+        ...chat,
+        otherUser: chat.members.find((m: any) => m.userId !== ctx.userId)?.user,
+        lastMessage: chat.messages[0] || null,
+        unreadCount: 0,
+      }));
     },
 
     async messages(
@@ -55,9 +83,27 @@ export const chatResolvers = {
             },
           },
         },
+        include: {
+          members: {
+            include: { user: true },
+          },
+          messages: {
+            take: 1,
+            orderBy: { createdAt: "desc" },
+            include: { author: true },
+          },
+        },
       });
 
-      if (existing) return existing;
+      if (existing) {
+        return {
+          ...existing,
+          otherUser: existing.members.find((m: any) => m.userId !== ctx.userId)
+            ?.user,
+          lastMessage: existing.messages[0] || null,
+          unreadCount: 0,
+        };
+      }
 
       const chat = await prisma.chat.create({
         data: {
@@ -69,11 +115,43 @@ export const chatResolvers = {
           members: {
             include: { user: true },
           },
-          messages: true,
+          messages: {
+            take: 1,
+            orderBy: { createdAt: "desc" },
+            include: { author: true },
+          },
         },
       });
 
-      return chat;
+      return {
+        ...chat,
+        otherUser: chat.members.find((m: any) => m.userId !== ctx.userId)?.user,
+        lastMessage: chat.messages[0] || null,
+        unreadCount: 0,
+      };
+    },
+
+    async sendMessage(
+      _: unknown,
+      { chatId, text }: { chatId: string; text: string },
+      ctx: GraphQLContext,
+    ) {
+      if (!ctx.userId) throw new Error("Unauthorized");
+
+      const message = await prisma.message.create({
+        data: {
+          chatId,
+          text,
+          authorId: ctx.userId,
+        },
+        include: {
+          author: {
+            select: { id: true, username: true },
+          },
+        },
+      });
+
+      return message;
     },
   },
 

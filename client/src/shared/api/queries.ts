@@ -38,6 +38,22 @@ export const GET_MESSAGES = gql`
   }
 `;
 
+export const SEARCH_USERS = gql`
+  query searchUsers($query: String!) {
+    searchUsers(query: $query) {
+      id
+      username
+      avatarUrl
+    }
+  }
+`;
+
+export const MARK_AS_READ = gql`
+  mutation markAsRead($chatId: ID!) {
+    markAsRead(chatId: $chatId)
+  }
+`;
+
 // Mutations
 export const SEND_MESSAGE = gql`
   mutation sendMessage($text: String!, $chatId: ID!) {
@@ -45,6 +61,7 @@ export const SEND_MESSAGE = gql`
       id
       text
       author {
+        id
         username
       }
       createdAt
@@ -78,6 +95,29 @@ export const REGISTER = gql`
   }
 `;
 
+export const CREATE_CHAT = gql`
+  mutation createChat($userId: ID!) {
+    createChat(userId: $userId) {
+      id
+      otherUser {
+        id
+        username
+        avatarUrl
+      }
+      unreadCount
+      lastMessage {
+        id
+        text
+        author {
+          id
+          username
+        }
+        createdAt
+      }
+    }
+  }
+`;
+
 // Subscriptions
 export const MESSAGE_SUBSCRIPTION = gql`
   subscription messageSent($chatId: ID!) {
@@ -85,6 +125,7 @@ export const MESSAGE_SUBSCRIPTION = gql`
       id
       text
       author {
+        id
         username
       }
       createdAt

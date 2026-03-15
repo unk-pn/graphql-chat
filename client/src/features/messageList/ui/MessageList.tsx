@@ -30,16 +30,25 @@ const MessageList = ({ messages, currentUserId }: MessageListProps) => {
 
   return (
     <div className={s.messageList}>
-      {messages.map((message) => (
-        <MessageItem
-          key={message.id}
-          content={message.text}
-          timestamp={message.createdAt}
-          // isOwn={message.author === currentUserId}
-          isOwn={message.author === "Me"}
-          isRead={message.isRead}
-        />
-      ))}
+      {messages.map((message) => {
+        const isOwn = message.author.id === currentUserId;
+
+        console.log("📨 message:", {
+          authorId: message.author.id,
+          currentUserId,
+          isOwn,
+        });
+
+        return (
+          <MessageItem
+            key={message.id}
+            content={message.text}
+            timestamp={message.createdAt}
+            isOwn={isOwn}
+            isRead={message.isRead}
+          />
+        );
+      })}
       <div ref={messagesEndRef} />
     </div>
   );

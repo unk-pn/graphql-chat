@@ -37,7 +37,8 @@ export const AuthForm = () => {
 
   const [login] = useMutation<LoginResponse, LoginVars>(LOGIN, {
     onCompleted: (data) => {
-      localStorage.setItem("token", data.login.token);
+      const token = data.login.token;
+      document.cookie = `token=${token}; path=/; max-age=86400`;
       router.push("/chats");
     },
     onError: (error) => console.error("Login error:", error.message),
@@ -45,7 +46,7 @@ export const AuthForm = () => {
 
   const [register] = useMutation<RegisterResponse, LoginVars>(REGISTER, {
     onCompleted: (data) => {
-      localStorage.setItem("token", data.register.token);
+      document.cookie = `token=${data.register.token}; path=/; max-age=86400`;
       router.push("/chats");
     },
     onError: (error) => console.error("Register error:", error.message),

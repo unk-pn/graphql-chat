@@ -13,11 +13,10 @@ const MessageInput = ({ onSend, disabled }: MessageInputProps) => {
 
   const handleSend = () => {
     const trimmed = message.trim();
+    if (!trimmed || disabled) return;
 
-    if (trimmed && !disabled) {
-      onSend(trimmed);
-      setMessage("");
-    }
+    onSend(trimmed);
+    setMessage("");
   };
 
   const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {

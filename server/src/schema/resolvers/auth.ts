@@ -23,6 +23,7 @@ export const authResolvers = {
 
       return { token, user };
     },
+    
     login: async (_: string, { username, password }: RegisterArgs) => {
       const user = await prisma.user.findUnique({
         where: { username },

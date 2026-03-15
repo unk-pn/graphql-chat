@@ -1,15 +1,30 @@
 "use client";
 
 import s from "./ChatHeader.module.scss";
+import { useQuery } from "@apollo/client/react";
+import { GET_CHATS } from "@/shared/api/queries";
+import { Chat } from "@/shared/types";
 
 interface ChatHeaderProps {
-  name: string;
-  avatar?: string;
-  isOnline: boolean;
-  lastSeen?: string;
+  chatId: string;
 }
 
-const ChatHeader = ({ name, avatar, isOnline, lastSeen }: ChatHeaderProps) => {
+interface GetChatsData {
+  chats: Chat[];
+}
+
+const ChatHeader = ({ chatId }: ChatHeaderProps) => {
+  const { data } = useQuery<GetChatsData>(GET_CHATS);
+
+  const chat = data?.chats.find((c) => c.id === chatId);
+
+  if (!chat) return null;
+
+  const name = chat.otherUser?.username || chat.name || "Чат";
+  const avatar = chat.otherUser?.avatarUrl || chat.avatarUrl;
+  const isOnline = chat.otherUser?.isOnline || false;
+  const lastSeen = undefined;
+
   const getInitials = (name: string) => {
     return name
       .split(" ")

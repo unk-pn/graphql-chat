@@ -16,11 +16,9 @@ const MessageItem = ({
   isRead,
 }: MessageItemProps) => {
   const formatTime = (dateStr?: string) => {
-    if (!dateStr) return ""; // 👈 защита от undefined
+    if (!dateStr) return "";
     const timestamp = Number(dateStr);
-    const date = isNaN(timestamp)
-      ? new Date(dateStr)
-      : new Date(timestamp * 1000);
+    const date = isNaN(timestamp) ? new Date(dateStr) : new Date(timestamp);
     return date.toLocaleTimeString("ru-RU", {
       hour: "2-digit",
       minute: "2-digit",

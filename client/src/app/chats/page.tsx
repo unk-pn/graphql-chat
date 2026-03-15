@@ -1,5 +1,5 @@
 import { ChatsPage } from "@/screens/chats";
 
-export default function NextLoginPage() {
+export default function NextChatsPage() {
   return <ChatsPage />;
 }
