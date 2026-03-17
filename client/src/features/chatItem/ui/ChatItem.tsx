@@ -29,7 +29,8 @@ const ChatItem = ({ chat, user, isSelected, onClick }: ChatItemProps) => {
   // Форматируем время последнего сообщения
   const formatTime = (dateStr?: string) => {
     if (!dateStr) return "";
-    const date = new Date(dateStr);
+    const parsed = Number(dateStr);
+    const date = isNaN(parsed) ? new Date(dateStr) : new Date(parsed);
     const now = new Date();
     const isToday = date.toDateString() === now.toDateString();
 
@@ -43,40 +44,6 @@ const ChatItem = ({ chat, user, isSelected, onClick }: ChatItemProps) => {
   };
 
   return (
-    // <div
-    //   className={`${s.chatItem} ${isSelected ? s.selected : ""}`}
-    //   onClick={onClick}
-    // >
-    //   <div className={s.avatar}>
-    //     {recipientAvatar ? (
-    //       <img src={recipientAvatar} alt={recipientName} />
-    //     ) : (
-    //       <span className={s.avatarPlaceholder}>
-    //         {getInitials(recipientName)}
-    //       </span>
-    //     )}
-    //   </div>
-
-    //   <div className={s.content}>
-    //     <div className={s.header}>
-    //       <span className={s.name}>{recipientName}</span>
-    //       {chat.lastMessage?.createdAt && (
-    //         <span className={s.time} suppressHydrationWarning>
-    //           {formatTime(chat.lastMessage.createdAt)}
-    //         </span>
-    //       )}
-    //     </div>
-
-    //     <div className={s.footer}>
-    //       <span className={s.lastMessage}>
-    //         {chat.lastMessage?.text || "Нет сообщений"}
-    //       </span>
-    //       {chat.unreadCount > 0 && (
-    //         <span className={s.unreadBadge}>{chat.unreadCount}</span>
-    //       )}
-    //     </div>
-    //   </div>
-    // </div>
     <div
       className={`${s.chatItem} ${isSelected ? s.selected : ""}`}
       onClick={onClick}

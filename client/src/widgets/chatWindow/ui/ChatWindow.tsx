@@ -4,6 +4,7 @@ import MessageInput from "@/features/messageInput";
 import MessageList from "@/features/messageList";
 import { ChatHeader } from "@/features/chatHeader";
 import {
+  GET_CHATS,
   GET_MESSAGES,
   MARK_AS_READ,
   MESSAGE_SUBSCRIPTION,
@@ -51,7 +52,7 @@ export const ChatWindow = ({ chatId }: ChatWindowProps) => {
     if (chatId) {
       markAsRead({
         variables: { chatId },
-        refetchQueries: [{ query: GET_MESSAGES }],
+        refetchQueries: [{ query: GET_MESSAGES }, { query: GET_CHATS }],
       });
     }
   }, [chatId, markAsRead]);

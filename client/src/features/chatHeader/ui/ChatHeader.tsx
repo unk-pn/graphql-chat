@@ -14,7 +14,9 @@ interface GetChatsData {
 }
 
 const ChatHeader = ({ chatId }: ChatHeaderProps) => {
-  const { data } = useQuery<GetChatsData>(GET_CHATS);
+  const { data } = useQuery<GetChatsData>(GET_CHATS, {
+    pollInterval: 10 * 1000, // обновляем каждые 5 секунд
+  });
 
   const chat = data?.chats.find((c) => c.id === chatId);
 

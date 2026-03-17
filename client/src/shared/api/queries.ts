@@ -9,6 +9,7 @@ export const GET_CHATS = gql`
         id
         username
         avatarUrl
+        isOnline
       }
       unreadCount
       lastMessage {
@@ -44,6 +45,7 @@ export const SEARCH_USERS = gql`
       id
       username
       avatarUrl
+        isOnline
     }
   }
 `;
@@ -77,6 +79,7 @@ export const LOGIN = gql`
         id
         username
         avatarUrl
+        isOnline
       }
     }
   }
@@ -90,6 +93,7 @@ export const REGISTER = gql`
         id
         username
         avatarUrl
+        isOnline
       }
     }
   }
@@ -103,6 +107,7 @@ export const CREATE_CHAT = gql`
         id
         username
         avatarUrl
+        isOnline
       }
       unreadCount
       lastMessage {

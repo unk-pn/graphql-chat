@@ -10,6 +10,7 @@ import cors from "cors";
 import { typeDefs } from "./schema/typeDefs";
 import { pubsub } from "./pubsub";
 import jwt from "jsonwebtoken";
+import { prisma } from "./lib/prisma";
 
 const schema = makeExecutableSchema({ typeDefs, resolvers });
 
@@ -40,6 +41,15 @@ useServer(
         try {
           const decoded = jwt.verify(token, process.env.JWT_SECRET!) as any;
           userId = decoded.userId;
+
+          prisma.user
+            .update({
+              where: { id: userId },
+              data: { lastSeen: new Date() },
+            })
+            .catch((err) => {
+              console.warn("Failed to update lastSeen:", err);
+            });
         } catch (error) {
           console.warn("Invalid ws token format");
         }
@@ -68,6 +78,15 @@ app.use(
         try {
           const decoded = jwt.verify(token, process.env.JWT_SECRET!) as any;
           userId = decoded.userId;
+
+          prisma.user
+            .update({
+              where: { id: userId },
+              data: { lastSeen: new Date() },
+            })
+            .catch((err) => {
+              console.warn("Failed to update lastSeen:", err);
+            });
         } catch (err) {
           console.warn("Invalid token format");
         }
