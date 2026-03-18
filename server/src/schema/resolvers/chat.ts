@@ -3,6 +3,14 @@ import type { ChatWithRelations, GraphQLContext } from "../../types/gql";
 
 export const chatResolvers = {
   Query: {
+    async me(_: unknown, __: unknown, ctx: GraphQLContext) {
+      if (!ctx.userId) throw new Error("Unauthorized");
+
+      return prisma.user.findUnique({
+        where: { id: ctx.userId },
+      });
+    },
+
     async searchUsers(
       _: unknown,
       { query }: { query: string },
@@ -144,29 +152,6 @@ export const chatResolvers = {
       });
 
       return resPayload;
-    },
-
-    async sendMessage(
-      _: unknown,
-      { chatId, text }: { chatId: string; text: string },
-      ctx: GraphQLContext,
-    ) {
-      if (!ctx.userId) throw new Error("Unauthorized");
-
-      const message = await prisma.message.create({
-        data: {
-          chatId,
-          text,
-          authorId: ctx.userId,
-        },
-        include: {
-          author: {
-            select: { id: true, username: true },
-          },
-        },
-      });
-
-      return message;
     },
   },
 

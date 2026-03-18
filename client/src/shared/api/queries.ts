@@ -46,14 +46,19 @@ export const SEARCH_USERS = gql`
       id
       username
       avatarUrl
-        isOnline
+      isOnline
     }
   }
 `;
 
-export const MARK_AS_READ = gql`
-  mutation markAsRead($chatId: ID!) {
-    markAsRead(chatId: $chatId)
+export const GET_ME = gql`
+  query getMe {
+     me {
+      id
+      username
+      avatarUrl
+      isOnline
+    }
   }
 `;
 
@@ -124,6 +129,12 @@ export const CREATE_CHAT = gql`
   }
 `;
 
+export const MARK_AS_READ = gql`
+  mutation markAsRead($chatId: ID!) {
+    markAsRead(chatId: $chatId)
+  }
+`;
+
 // Subscriptions
 export const MESSAGE_SUBSCRIPTION = gql`
   subscription messageSent($chatId: ID!) {
@@ -162,4 +173,4 @@ export const CHAT_UPDATED_SUBSCRIPTION = gql`
       }
     }
   }
-`
+`;

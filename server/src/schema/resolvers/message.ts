@@ -78,22 +78,18 @@ export const messageResolvers = {
       if (chat) {
         const otherMember = chat.members.find((m) => m.userId !== ctx.userId);
 
-        const senderPayload = {
-          ...chat,
-          lastMessage: message,
-        };
-
-        const receiverPayload = {
+        const chatPayload = {
           ...chat,
           lastMessage: message,
         };
 
         ctx.pubsub.publish(`USER_CHATS_UPDATED:${ctx.userId}`, {
-          chatUpdated: senderPayload,
+          chatUpdated: chatPayload,
         });
+
         if (otherMember) {
           ctx.pubsub.publish(`USER_CHATS_UPDATED:${otherMember.userId}`, {
-            chatUpdated: receiverPayload,
+            chatUpdated: chatPayload,
           });
         }
       }

@@ -18,6 +18,8 @@ const ChatItem = ({ chat, user, isSelected, onClick }: ChatItemProps) => {
   const recipientAvatar =
     user?.avatarUrl || chat?.otherUser?.avatarUrl || chat?.avatarUrl;
 
+  const isOnline = chat?.otherUser?.isOnline || user?.isOnline || false;
+
   const getInitials = (name: string) => {
     return name
       .split(" ")
@@ -48,14 +50,17 @@ const ChatItem = ({ chat, user, isSelected, onClick }: ChatItemProps) => {
       className={`${s.chatItem} ${isSelected ? s.selected : ""}`}
       onClick={onClick}
     >
-      <div className={s.avatar}>
-        {recipientAvatar ? (
-          <img src={recipientAvatar} alt={recipientName} />
-        ) : (
-          <span className={s.avatarPlaceholder}>
-            {getInitials(recipientName)}
-          </span>
-        )}
+      <div className={s.avatarWrapper}>
+        <div className={s.avatar}>
+          {recipientAvatar ? (
+            <img src={recipientAvatar} alt={recipientName} />
+          ) : (
+            <span className={s.avatarPlaceholder}>
+              {getInitials(recipientName)}
+            </span>
+          )}
+          {isOnline && <span className={s.onlineIndicator} />}
+        </div>
       </div>
 
       <div className={s.content}>

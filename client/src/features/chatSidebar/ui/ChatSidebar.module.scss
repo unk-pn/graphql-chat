@@ -113,27 +113,92 @@
 }
 
 .userInfo {
+  min-width: 0;
+
+  padding: 16px;
+  border-top: 1px solid #2a2a2a;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background-color: #1f1f1f;
+  box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.1);
+  margin-top: auto;
+}
+
+.avatarWrapper {
+  position: relative;
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+}
+
+.avatar {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  background-color: #333;
+  border: 2px solid #2a2a2a;
+}
+
+// Зеленая точка - статус онлайна
+.onlineIndicator {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 12px;
+  height: 12px;
+  background-color: #2eeb62;
+  border: 2px solid #1f1f1f;
+  border-radius: 50%;
+}
+
+.userDetails {
   flex: 1;
   min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+
+  h3 {
+    margin: 0 0 2px 0;
+    font-size: 15px;
+    font-weight: 600;
+    color: #f1f1f1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
 }
 
-.userName {
-  font-size: 14px;
-  font-weight: 500;
-  color: #ededed;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.userUsername {
+.userId {
+  margin: 0;
   font-size: 12px;
   color: #888;
+  font-family: monospace;
 }
 
-.searchingIndicator {
-  padding: 8px 12px;
-  font-size: 12px;
-  color: #888;
-  text-align: center;
+.logoutButton {
+  padding: 8px;
+  background-color: transparent;
+  color: #ff4d4f;
+  border: 1px solid rgba(255, 77, 79, 0.3);
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease-in-out;
+
+  &:hover {
+    background-color: #ff4d4f;
+    color: #fff;
+    border-color: #ff4d4f;
+  }
+
+  // Если захотите вставить иконку вместо текста
+  svg {
+    width: 18px;
+    height: 18px;
+  }
 }

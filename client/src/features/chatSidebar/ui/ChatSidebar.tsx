@@ -8,11 +8,18 @@ import {
   CHAT_UPDATED_SUBSCRIPTION,
   CREATE_CHAT,
   GET_CHATS,
+  GET_ME,
   SEARCH_USERS,
 } from "@/shared/api/queries";
-import { useLazyQuery, useMutation, useQuery } from "@apollo/client/react";
+import {
+  useApolloClient,
+  useLazyQuery,
+  useMutation,
+  useQuery,
+} from "@apollo/client/react";
 import { Chat, User } from "@/shared/types";
 import { useAppDispatch, useAppSelector } from "@/shared/store";
+import { useRouter } from "next/navigation";
 
 interface GetChatsData {
   chats: Chat[];
@@ -36,6 +43,12 @@ const ChatSidebar = () => {
   const [searchUsers, { data: searchResults }] =
     useLazyQuery<SearchUsersData>(SEARCH_USERS);
 
+  const { data: meData } = useQuery<{ me: User }>(GET_ME);
+  const currentUser = meData?.me;
+
+  const router = useRouter();
+  const apolloClient = useApolloClient();
+
   const { data, loading, subscribeToMore } = useQuery<GetChatsData>(GET_CHATS);
   const chats = data?.chats || [];
 
@@ -46,7 +59,17 @@ const ChatSidebar = () => {
       ? `${chat.otherUser.username}`
       : (chat.name || "").toLowerCase();
 
-    return name.includes(searchQuery.toLowerCase());
+    return name.toLowerCase().includes(searchQuery.toLowerCase());
+  });
+
+  const sortedChats = [...filteredChats].sort((a, b) => {
+    const dateA = a.lastMessage?.createdAt
+      ? Number(a.lastMessage.createdAt)
+      : 0;
+    const dateB = b.lastMessage?.createdAt
+      ? Number(b.lastMessage.createdAt)
+      : 0;
+    return dateB - dateA;
   });
 
   const [createChat] = useMutation<CreateChatMutationData>(CREATE_CHAT, {
@@ -94,6 +117,12 @@ const ChatSidebar = () => {
     dispatch(setSelectedChat(chatId));
   };
 
+  const handleLogout = () => {
+    document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+    apolloClient.clearStore();
+    router.push("/login");
+  };
+
   if (loading) return <div className={s.loading}>Загрузка чатов...</div>;
 
   return (
@@ -118,11 +147,10 @@ const ChatSidebar = () => {
               <ChatItem
                 key={user.id}
                 user={user}
-                // onClick={() => createChat({ variables: { userId: user.id } })}
                 onClick={() => handleCreateChat(user.id)}
               />
             ))
-          : filteredChats.map((chat) => (
+          : sortedChats.map((chat) => (
               <ChatItem
                 key={chat.id}
                 chat={chat}
@@ -137,6 +165,37 @@ const ChatSidebar = () => {
           </div>
         )}
       </div>
+
+      {/* User info */}
+      {currentUser && (
+        <div className={s.userInfo}>
+          <div className={s.avatarWrapper}>
+            {currentUser.avatarUrl ? (
+              <img
+                src={currentUser.avatarUrl}
+                alt="avatar"
+                className={s.avatar}
+              />
+            ) : (
+              <div className={s.avatar} />
+            )}
+            {currentUser.isOnline && <div className={s.onlineIndicator} />}
+          </div>
+
+          <div className={s.userDetails}>
+            <h3>{currentUser.username}</h3>
+            <p className={s.userId}>#{currentUser.id?.slice(0, 10)}...</p>
+          </div>
+
+          <button
+            className={s.logoutButton}
+            onClick={handleLogout}
+            title="Выйти"
+          >
+            Выйти
+          </button>
+        </div>
+      )}
     </aside>
   );
 };
