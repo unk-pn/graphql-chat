@@ -5,6 +5,7 @@ const nextConfig: NextConfig = {
   reactCompiler: true,
   allowedDevOrigins: [
     "http://192.168.0.144:3000",
+    "http://192.168.0.104:3000",
     "http://localhost:3000",
   ],
 };

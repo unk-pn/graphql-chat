@@ -28,22 +28,22 @@ model Chat {
 }
 
 model ChatUser {
-  chatId String
-  userId String
-  chat   Chat   @relation(fields: [chatId], references: [id])
-  user   User   @relation(fields: [userId], references: [id])
+  chatId    String
+  userId    String
+  chat      Chat       @relation(fields: [chatId], references: [id])
+  user      User       @relation(fields: [userId], references: [id])
 
   @@id([chatId, userId])
 }
 
 model Message {
-  id        String   @id @default(cuid())
+  id        String      @id @default(cuid())
   text      String
   authorId  String
-  author    User     @relation(fields: [authorId], references: [id])
+  author    User        @relation(fields: [authorId], references: [id])
   chatId    String
-  chat      Chat     @relation(fields: [chatId], references: [id])
-  createdAt DateTime @default(now())
-  isRead    Boolean  @default(false)
+  chat      Chat        @relation(fields: [chatId], references: [id])
+  createdAt DateTime    @default(now())
+  isRead    Boolean     @default(false)
   readAt    DateTime?
 }

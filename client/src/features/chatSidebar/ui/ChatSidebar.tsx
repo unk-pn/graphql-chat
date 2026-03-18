@@ -1,10 +1,15 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ChatItem } from "@/features/chatItem";
 import { setSelectedChat } from "@/store/chatSlice";
 import s from "./ChatSidebar.module.scss";
-import { CREATE_CHAT, GET_CHATS, SEARCH_USERS } from "@/shared/api/queries";
+import {
+  CHAT_UPDATED_SUBSCRIPTION,
+  CREATE_CHAT,
+  GET_CHATS,
+  SEARCH_USERS,
+} from "@/shared/api/queries";
 import { useLazyQuery, useMutation, useQuery } from "@apollo/client/react";
 import { Chat, User } from "@/shared/types";
 import { useAppDispatch, useAppSelector } from "@/shared/store";
@@ -17,18 +22,24 @@ interface SearchUsersData {
   searchUsers: User[];
 }
 
+interface ChatUpdatedSubscriptionData {
+  chatUpdated: Chat;
+}
+
+interface CreateChatMutationData {
+  createChat: Chat;
+}
+
 const ChatSidebar = () => {
   const dispatch = useAppDispatch();
   const [searchQuery, setSearchQuery] = useState("");
   const [searchUsers, { data: searchResults }] =
     useLazyQuery<SearchUsersData>(SEARCH_USERS);
 
-  const { data, loading } = useQuery<GetChatsData>(GET_CHATS);
+  const { data, loading, subscribeToMore } = useQuery<GetChatsData>(GET_CHATS);
   const chats = data?.chats || [];
 
-  const selectedChatId = useAppSelector(
-    (state) => state.chat.selectedChatId,
-  );
+  const selectedChatId = useAppSelector((state) => state.chat.selectedChatId);
 
   const filteredChats = chats.filter((chat) => {
     const name = chat.otherUser
@@ -38,9 +49,46 @@ const ChatSidebar = () => {
     return name.includes(searchQuery.toLowerCase());
   });
 
-  const [createChat] = useMutation(CREATE_CHAT, {
+  const [createChat] = useMutation<CreateChatMutationData>(CREATE_CHAT, {
     refetchQueries: [{ query: GET_CHATS }],
   });
+
+  useEffect(() => {
+    const unsubscribe = subscribeToMore<ChatUpdatedSubscriptionData>({
+      document: CHAT_UPDATED_SUBSCRIPTION,
+      updateQuery: (prev, { subscriptionData }) => {
+        if (!subscriptionData.data || !prev.chats) return prev as GetChatsData;
+        const updatedChat = subscriptionData.data.chatUpdated;
+
+        const exists = prev.chats.find((c) =>
+          c.id === updatedChat.id ? updatedChat : c,
+        );
+
+        if (exists) {
+          const newChats = prev.chats.map((c) =>
+            c.id === updatedChat.id ? updatedChat : c,
+          );
+          return { chats: newChats } as GetChatsData;
+        } else {
+          return { chats: [updatedChat, ...prev.chats] } as GetChatsData;
+        }
+      },
+    });
+
+    return () => unsubscribe();
+  }, [subscribeToMore]);
+
+  const handleCreateChat = async (userId: string) => {
+    try {
+      const { data } = await createChat({ variables: { userId } });
+      if (data?.createChat) {
+        dispatch(setSelectedChat(data.createChat.id));
+        setSearchQuery("");
+      }
+    } catch (error) {
+      console.log("Error creating chat: ", error);
+    }
+  };
 
   const handleChatClick = (chatId: string) => {
     dispatch(setSelectedChat(chatId));
@@ -70,7 +118,8 @@ const ChatSidebar = () => {
               <ChatItem
                 key={user.id}
                 user={user}
-                onClick={() => createChat({ variables: { userId: user.id } })}
+                // onClick={() => createChat({ variables: { userId: user.id } })}
+                onClick={() => handleCreateChat(user.id)}
               />
             ))
           : filteredChats.map((chat) => (

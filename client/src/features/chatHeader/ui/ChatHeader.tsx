@@ -15,7 +15,7 @@ interface GetChatsData {
 
 const ChatHeader = ({ chatId }: ChatHeaderProps) => {
   const { data } = useQuery<GetChatsData>(GET_CHATS, {
-    pollInterval: 10 * 1000, // обновляем каждые 5 секунд
+    pollInterval: 10 * 1000,
   });
 
   const chat = data?.chats.find((c) => c.id === chatId);
@@ -25,7 +25,26 @@ const ChatHeader = ({ chatId }: ChatHeaderProps) => {
   const name = chat.otherUser?.username || chat.name || "Чат";
   const avatar = chat.otherUser?.avatarUrl || chat.avatarUrl;
   const isOnline = chat.otherUser?.isOnline || false;
-  const lastSeen = undefined;
+
+  let lastSeen = "";
+  if (chat.otherUser?.lastSeen) {
+    const lastSeenDate = new Date(chat.otherUser.lastSeen);
+    const now = new Date();
+    const diffMs = now.getTime() - lastSeenDate.getTime();
+    const diffMinutes = Math.floor(diffMs / (60 * 1000));
+    const diffHours = Math.floor(diffMinutes / 60);
+    const diffDays = Math.floor(diffHours / 24);
+
+    if (diffMinutes < 1) {
+      lastSeen = "только что";
+    } else if (diffMinutes < 60) {
+      lastSeen = `${diffMinutes} мин назад`;
+    } else if (diffHours < 24) {
+      lastSeen = `${diffHours} ч назад`;
+    } else {
+      lastSeen = `${diffDays} д назад`;
+    }
+  }
 
   const getInitials = (name: string) => {
     return name

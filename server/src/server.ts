@@ -17,7 +17,11 @@ const schema = makeExecutableSchema({ typeDefs, resolvers });
 const app = express();
 app.use(
   cors({
-    origin: ["http://localhost:3000", "http://192.168.0.144:3000"],
+    origin: [
+      "http://localhost:3000",
+      "http://192.168.0.144:3000",
+      "http://192.168.0.104:3000",
+    ],
     credentials: true,
   }),
 );

@@ -4,5 +4,6 @@ export const userTypeDefs = `
     username: String
     avatarUrl: String
     isOnline: Boolean
+    lastSeen: String
   }
 `;

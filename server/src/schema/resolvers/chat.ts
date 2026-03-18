@@ -123,12 +123,27 @@ export const chatResolvers = {
         },
       });
 
-      return {
+      const resPayload = {
         ...chat,
-        otherUser: chat.members.find((m: any) => m.userId !== ctx.userId)?.user,
+        otherUser: chat.members.find((m) => m.userId !== ctx.userId)?.user,
         lastMessage: chat.messages[0] || null,
         unreadCount: 0,
       };
+
+      ctx.pubsub.publish(`USER_CHATS_UPDATED:${ctx.userId}`, {
+        chatUpdated: resPayload,
+      });
+
+      ctx.pubsub.publish(`USER_CHATS_UPDATED:${userId}`, {
+        chatUpdated: {
+          ...chat,
+          otherUser: chat.members.find((m) => m.userId !== ctx.userId)?.user,
+          lastMessage: chat.messages[0] || null,
+          unreadCount: 0,
+        },
+      });
+
+      return resPayload;
     },
 
     async sendMessage(

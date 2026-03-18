@@ -4,7 +4,8 @@ export interface User {
   id: string;
   username: string;
   avatarUrl?: string;
-  isOnline: boolean;
+  isOnline?: boolean;
+  lastSeen?: string | null;
 }
 
 export interface Message {

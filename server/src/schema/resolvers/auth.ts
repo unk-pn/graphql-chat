@@ -9,7 +9,7 @@ interface RegisterArgs {
 
 export const authResolvers = {
   Mutation: {
-    register: async (_: string, { username, password }: RegisterArgs) => {
+    register: async (_: unknown, { username, password }: RegisterArgs) => {
       const hashedPassword = await bcrypt.hash(password, 10);
 
       const user = await prisma.user.create({
@@ -24,7 +24,7 @@ export const authResolvers = {
       return { token, user };
     },
     
-    login: async (_: string, { username, password }: RegisterArgs) => {
+    login: async (_: unknown, { username, password }: RegisterArgs) => {
       const user = await prisma.user.findUnique({
         where: { username },
       });

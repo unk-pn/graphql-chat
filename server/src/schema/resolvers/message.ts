@@ -64,6 +64,40 @@ export const messageResolvers = {
         messageSent: message,
       });
 
+      const chat = await prisma.chat.findUnique({
+        where: { id: chatId },
+        include: {
+          members: {
+            include: {
+              user: true,
+            },
+          },
+        },
+      });
+
+      if (chat) {
+        const otherMember = chat.members.find((m) => m.userId !== ctx.userId);
+
+        const senderPayload = {
+          ...chat,
+          lastMessage: message,
+        };
+
+        const receiverPayload = {
+          ...chat,
+          lastMessage: message,
+        };
+
+        ctx.pubsub.publish(`USER_CHATS_UPDATED:${ctx.userId}`, {
+          chatUpdated: senderPayload,
+        });
+        if (otherMember) {
+          ctx.pubsub.publish(`USER_CHATS_UPDATED:${otherMember.userId}`, {
+            chatUpdated: receiverPayload,
+          });
+        }
+      }
+
       return message;
     },
   },

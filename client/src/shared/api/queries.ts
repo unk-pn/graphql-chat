@@ -10,6 +10,7 @@ export const GET_CHATS = gql`
         username
         avatarUrl
         isOnline
+        lastSeen
       }
       unreadCount
       lastMessage {
@@ -137,3 +138,28 @@ export const MESSAGE_SUBSCRIPTION = gql`
     }
   }
 `;
+
+export const CHAT_UPDATED_SUBSCRIPTION = gql`
+  subscription chatUpdated {
+    chatUpdated {
+      id
+      otherUser {
+        id
+        username
+        avatarUrl
+        isOnline
+        lastSeen
+      }
+      unreadCount
+      lastMessage {
+        id
+        text
+        author {
+          id
+          username
+        }
+        createdAt
+      }
+    }
+  }
+`
