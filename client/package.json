@@ -17,6 +17,7 @@
     "react": "19.2.3",
     "react-dom": "19.2.3",
     "react-redux": "^9.2.0",
+    "rxjs": "^7.8.2",
     "sass": "^1.98.0"
   },
   "devDependencies": {
@@ -35,5 +36,9 @@
   "trustedDependencies": [
     "sharp",
     "unrs-resolver"
-  ]
+  ],
+  "optionalDependencies": {
+    "@next/swc-linux-arm64-gnu": "*",
+    "@next/swc-linux-arm64-musl": "*"
+  }
 }

@@ -67,41 +67,50 @@ useServer(
 
 const server = new ApolloServer({ schema });
 
-await server.start();
+async function startServer() {
+  await server.start();
+  app.use(express.json());
+  app.use(
+    "/graphql",
+    expressMiddleware(server, {
+      context: async ({ req }) => {
+        const authHeader = req.headers.authorization || "";
+        const token = authHeader.replace("Bearer ", "");
 
-app.use(express.json());
-app.use(
-  "/graphql",
-  expressMiddleware(server, {
-    context: async ({ req }) => {
-      const authHeader = req.headers.authorization || "";
-      const token = authHeader.replace("Bearer ", "");
+        let userId = null;
+        if (token) {
+          try {
+            const decoded = jwt.verify(token, process.env.JWT_SECRET!) as any;
+            userId = decoded.userId;
 
-      let userId = null;
-      if (token) {
-        try {
-          const decoded = jwt.verify(token, process.env.JWT_SECRET!) as any;
-          userId = decoded.userId;
-
-          prisma.user
-            .update({
-              where: { id: userId },
-              data: { lastSeen: new Date() },
-            })
-            .catch((err) => {
-              console.warn("Failed to update lastSeen:", err);
-            });
-        } catch (err) {
-          console.warn("Invalid token format");
+            prisma.user
+              .update({
+                where: { id: userId },
+                data: { lastSeen: new Date() },
+              })
+              .catch((err) => {
+                console.warn("Failed to update lastSeen:", err);
+              });
+          } catch (err) {
+            console.warn("Invalid token format");
+          }
         }
-      }
 
-      return { req, userId, pubsub };
+        return { req, userId, pubsub };
+      },
+    }),
+  );
+
+  httpServer.listen(
+    4000,
+    "0.0.0.0", // for Docker compatibility
+    () => {
+      console.log("HTTP: http://localhost:4000/graphql");
+      console.log("WS:   ws://localhost:4000/graphql");
     },
-  }),
-);
+  );
+}
 
-httpServer.listen(4000, () => {
-  console.log("HTTP: http://localhost:4000/graphql");
-  console.log("WS:   ws://localhost:4000/graphql");
+startServer().catch((err) => {
+  console.log(err);
 });
