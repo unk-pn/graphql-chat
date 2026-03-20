@@ -88,8 +88,8 @@ POSTGRES_PORT=5432
 
 JWT_SECRET=super_secret_jwt_key_123
 
-NEXT_PUBLIC_GRAPHQL_HTTP_URL=http://localhost:4000/graphql
-NEXT_PUBLIC_GRAPHQL_WS_URL=ws://localhost:4000/graphql
+NEXT_PUBLIC_GRAPHQL_ENDPOINT=http://localhost:4000/graphql
+NEXT_PUBLIC_GRAPHQL_WS_ENDPOINT=ws://localhost:4000/graphql
 ```
 
 #### 2. Server `.env` (For running locally without Docker)
@@ -107,8 +107,8 @@ DATABASE_URL="postgresql://postgres:postgres@localhost:5432/graphql_chat?schema=
 Create a `.env.local` or `.env` file in the `/client` directory:
 
 ```env
-NEXT_PUBLIC_GRAPHQL_HTTP_URL=http://localhost:4000/graphql
-NEXT_PUBLIC_GRAPHQL_WS_URL=ws://localhost:4000/graphql
+NEXT_PUBLIC_GRAPHQL_ENDPOINT=http://localhost:4000/graphql
+NEXT_PUBLIC_GRAPHQL_WS_ENDPOINT=ws://localhost:4000/graphql
 ```
 
 ### Installation &amp; Usage
