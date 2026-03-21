@@ -81,15 +81,18 @@ Before running the application (either via Docker or locally), you need to confi
 Create a `.env` file in the root directory:
 
 ```env
-POSTGRES_USER=postgres
-POSTGRES_PASSWORD=postgres
-POSTGRES_DB=graphql_chat
-POSTGRES_PORT=5432
+# db
+POSTGRES_USER=your_db_username
+POSTGRES_PASSWORD=your_db_password
+POSTGRES_DB=your_db_name
 
-JWT_SECRET=super_secret_jwt_key_123
+# client
+NEXT_PUBLIC_GRAPHQL_ENDPOINT=your_graphql_endpoint
+NEXT_PUBLIC_GRAPHQL_WS_ENDPOINT=your_graphql_ws_endpoint
 
-NEXT_PUBLIC_GRAPHQL_ENDPOINT=http://localhost:4000/graphql
-NEXT_PUBLIC_GRAPHQL_WS_ENDPOINT=ws://localhost:4000/graphql
+# server
+DATABASE_URL="postgresql://database_user:database_password@db:5432/graphql-chat"
+JWT_SECRET="your_jwt_secret"
 ```
 
 #### 2. Server `.env` (For running locally without Docker)
@@ -97,9 +100,8 @@ NEXT_PUBLIC_GRAPHQL_WS_ENDPOINT=ws://localhost:4000/graphql
 Create a `.env` file in the `/server` directory:
 
 ```env
-JWT_SECRET=super_secret_jwt_key_123
-# Update with your local PostgreSQL credentials
-DATABASE_URL="postgresql://postgres:postgres@localhost:5432/graphql_chat?schema=public"
+DATABASE_URL="postgresql://database_user:database_password@db:5432/graphql-chat"
+JWT_SECRET="your_jwt_secret"
 ```
 
 #### 3. Client `.env` (For running locally without Docker)
